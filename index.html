@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M Channel Live</title>
-    <!-- Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- HLS.js လိုင်ဘရီ (ဘရောက်ဆာတိုင်းမှာ m3u8 အလုပ်လုပ်စေရန်) -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
@@ -18,17 +16,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: sans-serif;
         }
         video {
             width: 100%;
             height: 100%;
             object-fit: contain;
-        }
-        .error-box {
-            color: #fff;
-            text-align: center;
-            padding: 20px;
         }
     </style>
 </head>
@@ -37,44 +29,22 @@
     <video id="video" controls autoplay playsinline></video>
 
     <script>
-        // Telegram Web App မှတစ်ဆင့် User ID စစ်ဆေးခြင်း
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        
-        const user = tg.initDataUnsafe?.user;
-        const userId = user ? user.id : null;
+        var video = document.getElementById('video');
+        var videoSrc = 'https://mmtvs.exliatycl.online/mchannel/stream.m3u8'; // သင့်ရဲ့ m3u8 လင့်ခ်
 
-        // 🟢 လစဥ်ကြေးပေးထားပြီးသား User ID များကို ဤနေရာတွင် ထည့်ပါ (Comma ခြားရန်)
-        const allowedUserIDs = [7959310620, 8724775260, 1953715323]; 
-
-        // ID စာရင်းထဲတွင် ပါဝင်မှသာ ဗီဒီယိုစတင်မည်
-        if (userId && allowedUserIDs.includes(userId)) {
-            var video = document.getElementById('video');
-            var videoSrc = 'https://mmtvs.exliatycl.online/mchannel/stream.m3u8'; // သင့်ရဲ့ m3u8 လင့်ခ်
-
-            if (Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(videoSrc);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                });
-            } 
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = videoSrc;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                });
-            }
-        } else {
-            // ID စာရင်းထဲ မပါပါက သတိပေးချက်စာသား ပြမည်
-            document.body.innerHTML = `
-                <div class="error-box">
-                    <h2>❌ တောင်းပန်ပါတယ်</h2>
-                    <p>ဤ Channel ကို ကြည့်ရှုရန် လစဥ်ကြေးပေးသွင်းရန် လိုအပ်ပါသည်။</p>
-                    <p>Admin ထံတွင် ငွေပေးချေပြီး Member ဝင်ပါ။</p>
-                </div>
-            `;
+        if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+        } 
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
         }
     </script>
 
