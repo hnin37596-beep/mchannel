@@ -1,37 +1,19 @@
-<!DOCTYPE html>
-<html lang="my">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M Channel Live</title>
-    <!-- HLS.js လိုင်ဘရီ (ဘရောက်ဆာတိုင်းမှာ m3u8 အလုပ်လုပ်စေရန်) -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-    </style>
-</head>
-<body>
+<script>
+    // Telegram Web App ကနေတဆင့် ဝင်လာတဲ့ User ရဲ့ ID ကို ယူခြင်း
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    
+    const user = tg.initDataUnsafe?.user;
+    const userId = user ? user.id : null;
 
-    <video id="video" controls autoplay playsinline></video>
+    // လစဥ်ကြေးပေးထားပြီးသား User ID စာရင်း (Admin က ဒီမှာ လာဖြည့်ပေးရပါမယ်)
+    const allowedUserIDs = [7959310620, 1953715323]; // ဥပမာ ID များ
 
-    <script>
+    if (userId && allowedUserIDs.includes(userId)) {
+        // ID စာရင်းထဲ ပါရင် ဗီဒီယိုပြမယ်
         var video = document.getElementById('video');
-        var videoSrc = 'https://mmtvs.exliatycl.online/mchannel/stream.m3u8'; // သင့်ရဲ့ m3u8 လင့်ခ်
-
+        var videoSrc = 'https://mmtvs.exliatycl.online/mchannel/stream.m3u8';
+        
         if (Hls.isSupported()) {
             var hls = new Hls();
             hls.loadSource(videoSrc);
@@ -39,15 +21,14 @@
             hls.on(Hls.Events.MANIFEST_PARSED, function() {
                 video.play();
             });
-        } 
-        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoSrc;
             video.addEventListener('loadedmetadata', function() {
                 video.play();
             });
         }
-    </script>
-
-</body>
-</html>
-
+    } else {
+        // ID စာရင်းထဲ မပါရင် သတိပေးချက်ပြမယ်
+        document.body.innerHTML = "<h2 style='color:white; text-align:center; font-family:sans-serif;'>❌ တောင်းပန်ပါတယ်၊ သင်သည် လစဥ်ကြေးပေးသွင်းထားခြင်း မရှိသေးပါ သို့မဟုတ် Member မဟုတ်ပါ။</h2>";
+    }
+</script>
