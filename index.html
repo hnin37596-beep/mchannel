@@ -1,34 +1,28 @@
-<script>
-    // Telegram Web App ကနေတဆင့် ဝင်လာတဲ့ User ရဲ့ ID ကို ယူခြင်း
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+import telebot
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+
+# ၁။ BotFather ဆီမှ ရထားသော သင်၏ Bot Token ကို ဤနေရာတွင် ထည့်ပါ
+TOKEN = "YOUR_BOT_TOKEN_HERE"
+bot = telebot.TeleBot(TOKEN)
+
+# ၂။ GitHub Pages မှ ရလာသော သင်၏ Web App လင့်ခ်ကို ထည့်ပါ 
+# (ဥပမာ - https://hnin37596-beep.github.io/mchannel/)
+WEB_APP_URL = "https://hnin37596-beep.github.io/mchannel/"
+
+@bot.message_handler(commands=['start', 'mchannel'])
+def send_welcome(message):
+    markup = InlineKeyboardMarkup()
     
-    const user = tg.initDataUnsafe?.user;
-    const userId = user ? user.id : null;
+    # Telegram Web App ခလုတ်ဖန်တီးခြင်း
+    web_app = WebAppInfo(url=WEB_APP_URL)
+    btn = InlineKeyboardButton("📺 M Channel ကြည့်ရန်", web_app=web_app)
+    markup.add(btn)
+    
+    bot.send_message(
+        message.chat.id, 
+        "မင်္ဂလာပါ! M Channel ကို တိုက်ရိုက်ကြည့်ရှုရန် အောက်ပါခလုတ်ကို နှိပ်ပါ 👇", 
+        reply_markup=markup
+    )
 
-    // လစဥ်ကြေးပေးထားပြီးသား User ID စာရင်း (Admin က ဒီမှာ လာဖြည့်ပေးရပါမယ်)
-    const allowedUserIDs = [7959310620, 1953715323]; // ဥပမာ ID များ
-
-    if (userId && allowedUserIDs.includes(userId)) {
-        // ID စာရင်းထဲ ပါရင် ဗီဒီယိုပြမယ်
-        var video = document.getElementById('video');
-        var videoSrc = 'https://hnin37596-beep.github.io/mchannel/';
-        
-        if (Hls.isSupported()) {
-            var hls = new Hls();
-            hls.loadSource(videoSrc);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                video.play();
-            });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = videoSrc;
-            video.addEventListener('loadedmetadata', function() {
-                video.play();
-            });
-        }
-    } else {
-        // ID စာရင်းထဲ မပါရင် သတိပေးချက်ပြမယ်
-        document.body.innerHTML = "<h2 style='color:white; text-align:center; font-family:sans-serif;'>❌ တောင်းပန်ပါတယ်၊ သင်သည် လစဥ်ကြေးပေးသွင်းထားခြင်း မရှိသေးပါ သို့မဟုတ် Member မဟုတ်ပါ။</h2>";
-    }
-</script>
+print("Bot is running and waiting for messages...")
+bot.infinity_polling()
